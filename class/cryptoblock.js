@@ -1,12 +1,16 @@
 import SHA256 from "crypto-js/sha256.js";
 
 class CryptoBlock {
-  constructor(index, timestamp, data, precedingHash = " ") {
+  constructor(index, timestamp, data, precedingHash = " ", hash) {
     this.index = index;
     this.timestamp = timestamp;
     this.data = data;
     this.precedingHash = precedingHash;
-    this.hash = this.computeHash();
+    if (hash) {
+      this.hash = hash;
+    } else {
+      this.hash = this.computeHash();
+    }
     this.nonce = 0;
   }
 
