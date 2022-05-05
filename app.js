@@ -134,6 +134,7 @@ app.post("/login", (req, res) => {
 });
 
 app.get("/", (req, res) => {
+  console.log(req.cookies);
   if (req.cookies.wallet) {
     const transactions = MyCoin;
     const moneyInWallet = MyCoin.checkMoneyInWallet(req.cookies.wallet);
@@ -158,24 +159,22 @@ app
     const wallet = req.body.wallet;
 
     if (wallet === "") {
-      return res.render("index", {
+      return res.render("register", {
         msg: "Tên ví không được trống.",
         wallets,
       });
     }
 
     if (wallets.includes(wallet)) {
-      return res.render("index", {
+      return res.render("register", {
         msg: "Tên ví đã tồn tại.",
         wallets,
       });
     }
 
     wallets.push(wallet);
-    return res.render("index", {
-      msg: "Tạo ví thành công.",
-      wallets,
-    });
+    res.cookie("wallet", wallet);
+    res.redirect("/");
   })
   .get((req, res) => {
     res.send({
