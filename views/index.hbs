@@ -32,20 +32,27 @@
         <form class="form" method="post" action="/transaction">
           <div class="form-group" style="width: 100%;">
 
-            <select class="custom-select" name="receiver">
+            {{!-- <select class="custom-select" name="receiver">
               <option selected>Ví nhận</option>
               {{#if wallets}}
                 {{#each wallets}}
                   <option value="{{this}}">{{this}}</option>
                 {{/each}}
               {{/if}}
-            </select>
+            </select> --}}
+            <input
+              type="text"
+              name="receiver"
+              name="wallet"
+              class="form-control"
+              placeholder="Nhập địa chỉ ví nhận"
+            />
             <input
               type="number"
               name="money"
               name="wallet"
               class="form-control"
-              placeholder="Số tiền"
+              placeholder="Số Coin"
             />
           </div>
           <button type="submit" class="btn btn-success" style="width: 100%;">Tạo
