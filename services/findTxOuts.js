@@ -1,3 +1,4 @@
+import Transaction from "../class/transaction.js";
 import TxIn from "../class/txIn.js";
 import TxOut from "../class/txOut.js";
 
@@ -36,3 +37,13 @@ const createTxOuts = (receiverAddress, myAddress, amount, leftOverAmount) => {
     return [txOut1, leftOverTx];
   }
 };
+
+const tx = new Transaction();
+tx.txIns = unsignedTxIns;
+tx.txOuts = createTxOuts(receiverAddress, myAddress, amount, leftOverAmount);
+tx.id = getTransactionId(tx);
+
+tx.txIns = tx.txIns.map((txIn, index) => {
+  txIn.signature = signTxIn(tx, index, privateKey, unspentTxOuts);
+  return txIn;
+});
