@@ -57,7 +57,11 @@ class blockchain {
     this.difficulty = 5;
     this.chain.push(new block(0, [], "0"));
     this.suspendedTransaction = []; // unspent transaction
-    this.bonus = 1000; //Là phần thưởng dành cho các miner (người đào hash) cho việc thêm mới thành công mảng GiaoDichTamHoan vào Blockchain.
+    this.bonus = 1000; // cost for miner
+  }
+
+  getZERO() {
+    return 0;
   }
 
   mineEmoney(myWallet) {
@@ -79,14 +83,15 @@ class blockchain {
   }
 
   checkMoneyInWallet(myWallet) {
-    let moneyInWallet = 0;
+    const indexOfWallet = wallets.findIndex((element) => element == myWallet);
+    let moneyInWallet = Number(moneyInWallets[indexOfWallet]);
     this.chain.map((block) => {
       block.transactionList.map((transaction) => {
         if (transaction.sender === myWallet) {
-          moneyInWallet -= transaction.value;
+          moneyInWallet -= Number(transaction.value);
         }
         if (transaction.receiver === myWallet) {
-          moneyInWallet += transaction.value;
+          moneyInWallet += Number(transaction.value);
         }
       });
     });
@@ -123,6 +128,8 @@ app.use(cookieParser());
 
 let MyCoin = new blockchain();
 let wallets = ["A", "B", "C"];
+let moneyInWallets = [10, 15, 20];
+let transactionsList = [];
 
 app.post("/login", (req, res) => {
   const wallet = req.body.wallet;
@@ -134,13 +141,22 @@ app.post("/login", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  console.log(req.cookies);
   if (req.cookies.wallet) {
-    const transactions = MyCoin;
+    const transactions = transactionsList.map(
+      (i) =>
+        `Bên gửi: ${i.sender}, bên nhận: ${i.receiver}, số coin: ${i.value}`
+    );
+    // console.log(transactionsList);
     const moneyInWallet = MyCoin.checkMoneyInWallet(req.cookies.wallet);
+    const suspendedTransactions = MyCoin.suspendedTransaction.map(
+      (i) =>
+        `Bên gửi: ${i.sender}, bên nhận: ${i.receiver}, số coin: ${i.value}`
+    );
+
     res.render("index", {
       wallets,
       transactions,
+      suspendedTransactions,
       walletName: req.cookies.wallet,
       moneyInWallet,
     });
@@ -173,6 +189,7 @@ app
     }
 
     wallets.push(wallet);
+    moneyInWallets.push(0);
     res.cookie("wallet", wallet);
     res.redirect("/");
   })
@@ -185,7 +202,19 @@ app
 app
   .route("/transaction")
   .get((req, res) => {
-    res.send(MyCoin);
+    const suspendedTransactions = MyCoin.suspendedTransaction.map(
+      (i) =>
+        `Bên gửi: ${i.sender}, bên nhận: ${i.receiver}, số coin: ${i.value}`
+    );
+    const moneyInWallet = MyCoin.checkMoneyInWallet(req.cookies.wallet);
+
+    // res.render("index", {
+    //   wallets,
+    //   suspendedTransactions,
+    //   moneyInWallet,
+    // });
+    res.redirect("/");
+    // res.send(MyCoin.suspendedTransaction);
   })
   .post((req, res) => {
     const sender = req.body.sender,
@@ -198,19 +227,23 @@ app
     if (!wallets.includes(receiver)) {
       return res.status(400).send("Ví nhận tiền không tồn tại.");
     }
-
+    const moneyInWallet = MyCoin.checkMoneyInWallet(req.cookies.wallet);
+    if (money > moneyInWallet) {
+      return res.status(400).send("Ví không đủ tiền để thực hiện.");
+    }
     MyCoin.createTransaction(new transaction(sender, receiver, money));
     const suspendedTransactions = MyCoin.suspendedTransaction.map(
-      (i) => `Bên gửi: ${i.sender}, bên nhận: ${i.receiver}`
+      (i) =>
+        `Bên gửi: ${i.sender}, bên nhận: ${i.receiver}, số coin: ${i.value}`
     );
-    const moneyInWallet = MyCoin.checkMoneyInWallet(req.cookies.wallet);
 
-    return res.render("index", {
-      msg: "Tạo giao dịch thành công.",
-      wallets,
-      suspendedTransactions,
-      moneyInWallet,
-    });
+    // res.render("index", {
+    //   msg: "Tạo giao dịch thành công.",
+    //   wallets,
+    //   suspendedTransactions,
+    //   moneyInWallet,
+    // });
+    res.redirect("/");
   });
 
 app.post("/mine/:wallet", (req, res) => {
@@ -218,16 +251,17 @@ app.post("/mine/:wallet", (req, res) => {
   if (!wallets.includes(wallet)) {
     return res.status(400).send("Ví của bạn không tồn tại.");
   }
-
+  if (MyCoin.suspendedTransaction.length === 0) {
+    return res.status(400).send("Không có giao dịch đang chờ.");
+  }
   console.log("Bắt đầu đào tiền ảo...");
+  transactionsList.push(MyCoin.suspendedTransaction[0]);
   MyCoin.mineEmoney(wallet);
   const chainLength = MyCoin.chain.length;
   const transactions = JSON.stringify(MyCoin.chain, true, 2);
-  console.log(transactions);
-  res.send({
-    msg: "Đào tiền ảo thành công.",
-    moneyInWallet: MyCoin.checkMoneyInWallet(wallet),
-  });
+  // console.log(transactions);
+  MyCoin.suspendedTransaction = [];
+  res.redirect("/");
 });
 
 app.get("/money/:wallet", (req, res) => {
