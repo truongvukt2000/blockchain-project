@@ -1,4 +1,5 @@
 import TxIn from "../class/txIn.js";
+import TxOut from "../class/txOut.js";
 
 const findTxOutsForAmount = (amount, myUnspentTxOuts) => {
   let currentAmount = 0;
@@ -25,3 +26,13 @@ const { includedUnspentTxOuts, leftOverAmount } = findTxOutsForAmount(
   myUnspentTxouts
 );
 const unsignedTxIns = includedUnspentTxOuts.map(toUnsignedTxIn);
+
+const createTxOuts = (receiverAddress, myAddress, amount, leftOverAmount) => {
+  const txOut1 = new TxOut(receiverAddress, amount);
+  if (leftOverAmount === 0) {
+    return [txOut1];
+  } else {
+    const leftOverTx = new TxOut(myAddress, leftOverAmount);
+    return [txOut1, leftOverTx];
+  }
+};
