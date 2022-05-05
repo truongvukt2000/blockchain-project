@@ -6,7 +6,6 @@ const momentTZ = require("moment-timezone");
 const crypto = require("crypto");
 const cookieParser = require("cookie-parser");
 
-// === CLASS MÔ TẢ CẤU TRÚC 1 GIAO DỊCH ===
 class transaction {
   constructor(sender, receiver, value) {
     this.sender = sender;
@@ -15,7 +14,6 @@ class transaction {
   }
 }
 
-// === CLASS MÔ TẢ CẤU TRÚC 1 BLOCK
 class block {
   constructor(index, transactionList, prevHash) {
     this.index = index;
@@ -57,7 +55,7 @@ class blockchain {
     this.difficulty = 5;
     this.chain.push(new block(0, [], "0"));
     this.suspendedTransaction = []; // unspent transaction
-    this.bonus = 1000; // cost for miner
+    this.bonus = 5; // cost for miner
   }
 
   getZERO() {
@@ -113,7 +111,6 @@ class blockchain {
 
 const app = express();
 
-// view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
 
@@ -259,19 +256,9 @@ app.post("/mine/:wallet", (req, res) => {
   MyCoin.mineEmoney(wallet);
   const chainLength = MyCoin.chain.length;
   const transactions = JSON.stringify(MyCoin.chain, true, 2);
-  // console.log(transactions);
+  console.log(transactions);
   MyCoin.suspendedTransaction = [];
   res.redirect("/");
-});
-
-app.get("/money/:wallet", (req, res) => {
-  const wallet = req.params.wallet;
-  if (!wallets.includes(wallet)) {
-    return res.status(400).send("Ví của bạn không tồn tại.");
-  }
-  res.send({
-    moneyInWallet: MyCoin.checkMoneyInWallet(wallet),
-  });
 });
 
 // catch 404 and forward to error handler
