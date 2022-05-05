@@ -1,56 +1,92 @@
+<div>
+  <h1 style="margin-top: 10px; color: red; text-align: center">MY COIN</h1>
+</div>
 <div class="container">
-    <div class="row" style="padding-top: 50px;">
-        <div class="col-sm-3">
-            <ul class="list-group">
-                <li class="list-group-item active">Số tiền bạn có trong ví: {{moneyInWallet}}</li>
-            </ul>
-        </div>
-        <div class="col-sm-3">
-            <div>
-                <li class="list-group-item active">Tạo giao dịch</li>
-                <form class="form" method="post" action="/transaction">
-                    <div class="form-group" style="width: 100%;">
-                        <select class="custom-select" name="sender">
-                            <option value="{{walletName}}" selected>Ví gửi</option>
-                            <option value="{{walletName}}">{{walletName}}</option>
-                        </select>
-                        <select class="custom-select" name="receiver">
-                            <option selected>Ví nhận</option>
-                            {{#if wallets}}
-                            {{#each wallets}}
-                            <option value="{{this}}">{{this}}</option>
-                            {{/each}}
-                            {{/if}}
-                        </select>
-                        <input type="number" name="money" name="wallet" class="form-control" placeholder="Số tiền">
-                    </div>
-                    <button type="submit" class="btn btn-success" style="width: 100%;">Tạo giao dịch</button>
-                </form>
-            </div>
-            <div style="padding-top: 20px;">
-                <li class="list-group-item active">Danh sách giao dịch tạm hoãn</li>
-                {{#if suspendedTransactions}}
-                {{#each suspendedTransactions}}
-                <li class="list-group-item">{{this}}</li>
-                {{/each}}
-                {{/if}}
-            </div>
-        </div>
-        <div class="col-sm-3">
-            <div>
-                <li class="list-group-item active">Xác nhận giao dịch</li>
-                <form class="form" method="post" action="/mine/{{walletName}}">
-                    <button type="submit" class="btn btn-success" style="width: 100%;">Bắt đầu đào tiền ảo</button>
-                </form>
-            </div>
-            <div style="padding-top: 20px;">
-                <li class="list-group-item active">Danh sách giao dịch</li>
-                {{#if transactions}}
-                {{#each transactions}}
-                <li class="list-group-item">{{this}}</li>
-                {{/each}}
-                {{/if}}
-            </div>
-        </div>
+  <div class="row" style="padding-top: 50px;">
+    <div class="col-sm-6">
+      <ul class="list-group">
+        <li
+          class="list-group-item active"
+          style="text-align: center; font-size:20px; font-weight:bold"
+        >Số tiền bạn có trong ví:
+          {{moneyInWallet}}</li>
+      </ul>
+      <div style="padding-top: 55px;">
+        <li
+          class="list-group-item active"
+          style="text-align: center; font-size:20px; font-weight:bold; margin-bottom: 18px;"
+        >Xác nhận giao dịch</li>
+        <form class="form" method="post" action="/mine/{{walletName}}">
+          <button type="submit" class="btn btn-success" style="width: 100%;">Bắt
+            đầu đào tiền ảo</button>
+        </form>
+      </div>
     </div>
+    <div class="col-sm-6">
+      <div>
+        <li
+          class="list-group-item active"
+          style="font-size:20px; font-weight:bold; text-align: center"
+        >Giao dịch</li>
+        <form class="form" method="post" action="/transaction">
+          <div class="form-group" style="width: 100%;">
+            <select class="custom-select" name="sender">
+              <option value="{{walletName}}" selected>Ví gửi</option>
+              <option value="{{walletName}}">{{walletName}}</option>
+            </select>
+            <select class="custom-select" name="receiver">
+              <option selected>Ví nhận</option>
+              {{#if wallets}}
+                {{#each wallets}}
+                  <option value="{{this}}">{{this}}</option>
+                {{/each}}
+              {{/if}}
+            </select>
+            <input
+              type="number"
+              name="money"
+              name="wallet"
+              class="form-control"
+              placeholder="Số tiền"
+            />
+          </div>
+          <button type="submit" class="btn btn-success" style="width: 100%;">Tạo
+            giao dịch</button>
+        </form>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div style="padding-top: 20px;">
+        <li
+          class="list-group-item active"
+          style="font-size:20px; font-weight:bold; text-align:center"
+        >Danh sách giao dịch tạm hoãn</li>
+        {{#if suspendedTransactions}}
+          {{#each suspendedTransactions}}
+            <li class="list-group-item">{{this}}</li>
+          {{/each}}
+        {{/if}}
+      </div>
+    </div>
+    <div class="col-sm-6">
+      {{!-- <div>
+        <li class="list-group-item active">Xác nhận giao dịch</li>
+        <form class="form" method="post" action="/mine/{{walletName}}">
+          <button type="submit" class="btn btn-success" style="width: 100%;">Bắt
+            đầu đào tiền ảo</button>
+        </form>
+      </div> --}}
+      <div style="padding-top: 20px;">
+        <li
+          class="list-group-item active"
+          style="font-size:20px; font-weight:bold; text-align:center"
+        >Danh sách giao dịch</li>
+        {{#if transactions}}
+          {{#each transactions}}
+            <li class="list-group-item">{{this}}</li>
+          {{/each}}
+        {{/if}}
+      </div>
+    </div>
+  </div>
 </div>
