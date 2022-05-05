@@ -12,7 +12,7 @@
         >Số tiền bạn có trong ví:
           {{moneyInWallet}}</li>
       </ul>
-      <div style="padding-top: 55px;">
+      <div style="padding-top: 55px; padding-bottom: 15px">
         <li
           class="list-group-item active"
           style="text-align: center; font-size:20px; font-weight:bold; margin-bottom: 18px;"
@@ -31,10 +31,7 @@
         >Giao dịch</li>
         <form class="form" method="post" action="/transaction">
           <div class="form-group" style="width: 100%;">
-            <select class="custom-select" name="sender">
-              <option value="{{walletName}}" selected>Ví gửi</option>
-              <option value="{{walletName}}">{{walletName}}</option>
-            </select>
+
             <select class="custom-select" name="receiver">
               <option selected>Ví nhận</option>
               {{#if wallets}}

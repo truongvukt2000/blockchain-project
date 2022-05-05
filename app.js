@@ -217,7 +217,7 @@ app
     // res.send(MyCoin.suspendedTransaction);
   })
   .post((req, res) => {
-    const sender = req.body.sender,
+    const sender = req.cookies.wallet,
       receiver = req.body.receiver,
       money = req.body.money;
 
